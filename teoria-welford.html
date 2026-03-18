@@ -5,15 +5,20 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Teoria Welford - Homework</title>
   <link rel="stylesheet" href="style.css">
+  
   <script>
     window.MathJax = {
-      tex: { inlineMath: [['\\(', '\\)'], ['$', '$']], displayMath: [['\\[', '\\]']] }
+      tex: {
+        inlineMath: [['\\(', '\\)'], ['$', '$']],
+        displayMath: [['\\[', '\\]']]
+      }
     };
   </script>
   <script async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
 </head>
 <body>
   <div class="layout">
+    
     <aside class="sidebar">
       <h2>Menù Consegne</h2>
       <a href="index.html">🏠 Home (Welcome)</a>
@@ -24,46 +29,94 @@
     <main class="content">
       <section class="section">
         <h2>Dimostrazione di Welford</h2>
-        <p>L'algoritmo di Welford serve a calcolare media e varianza in modo incrementale...</p>
-        
-        <p>Supponiamo di osservare una sequenza di dati \(x_1, x_2, \dots, x_n\). Indichiamo con \(\mu_n\) la media dei primi \(n\) valori e con \(M_{2,n}\) la somma degli scarti quadratici dalla media:</p>
-        
+
+        <p>
+          L'algoritmo di Welford serve a calcolare media e varianza in modo incrementale,
+          cioè aggiornando i valori ogni volta che arriva una nuova osservazione,
+          senza dover ricalcolare tutto da zero.
+        </p>
+
+        <p>
+          Supponiamo di osservare una sequenza di dati \(x_1, x_2, \dots, x_n\).
+          Indichiamo con \(\mu_n\) la media dei primi \(n\) valori e con \(M_{2,n}\)
+          la somma degli scarti quadratici dalla media:
+        </p>
+
         <div class="math-block">
           \[ \mu_n = \frac{1}{n}\sum_{i=1}^{n} x_i \]
         </div>
+
         <div class="math-block">
           \[ M_{2,n} = \sum_{i=1}^{n} (x_i - \mu_n)^2 \]
         </div>
-        
-        <p>L'idea chiave è trovare una formula ricorsiva che permetta di passare da \((\mu_{n-1}, M_{2,n-1})\) a \((\mu_n, M_{2,n})\) dopo l'arrivo del nuovo dato \(x_n\).</p>
-        
+
+        <p>
+          L'idea chiave è trovare una formula ricorsiva che permetta di passare da
+          \((\mu_{n-1}, M_{2,n-1})\) a \((\mu_n, M_{2,n})\) dopo l'arrivo del nuovo dato \(x_n\).
+        </p>
+
         <h3>Aggiornamento della media</h3>
+
         <p>Partiamo dalla definizione:</p>
+
         <div class="math-block">
           \[ \mu_n = \frac{1}{n}\sum_{i=1}^{n} x_i = \frac{1}{n}\left(\sum_{i=1}^{n-1} x_i + x_n\right) \]
         </div>
+
         <p>Poiché \(\sum_{i=1}^{n-1} x_i = (n-1)\mu_{n-1}\), otteniamo:</p>
+
         <div class="math-block">
-          \[ \mu_n = \frac{(n-1)\mu_{n-1} + x_n}{n} = \mu_{n-1} + \frac{x_n - \mu_{n-1}}{n} \]
+          \[ \mu_n = \frac{(n-1)\mu_{n-1} + x_n}{n} \]
         </div>
-        
+
+        <p>Riscrivendo la formula in modo più utile:</p>
+
+        <div class="math-block">
+          \[ \mu_n = \mu_{n-1} + \frac{x_n - \mu_{n-1}}{n} \]
+        </div>
+
+        <p>Se definiamo \(\delta_n = x_n - \mu_{n-1}\), allora:</p>
+
+        <div class="math-block">
+          \[ \mu_n = \mu_{n-1} + \frac{\delta_n}{n} \]
+        </div>
+
         <h3>Aggiornamento della quantità quadratica</h3>
-        <p>Separiamo l'ultimo termine:</p>
+
+        <p>
+          Ora vogliamo aggiornare \(M_{2,n} = \sum_{i=1}^{n}(x_i - \mu_n)^2\).
+          Separiamo l'ultimo termine:
+        </p>
+
         <div class="math-block">
           \[ M_{2,n} = \sum_{i=1}^{n-1}(x_i - \mu_n)^2 + (x_n - \mu_n)^2 \]
         </div>
-        <p>Applicando le manipolazioni algebriche sui primi \(n-1\) termini, otteniamo la formula classica di Welford:</p>
+
+        <p>Per i primi \(n-1\) termini scriviamo:</p>
+
         <div class="math-block">
-          \[ M_{2,n} = M_{2,n-1} + (x_n - \mu_{n-1})(x_n - \mu_n) \]
+          \[ x_i - \mu_n = (x_i - \mu_{n-1}) + (\mu_{n-1} - \mu_n) \]
         </div>
-        
-        <h3>Varianza finale</h3>
-        <p>La varianza campionaria si ottiene così:</p>
+
+        <p>Quindi:</p>
+
         <div class="math-block">
-          \[ s_n^2 = \frac{M_{2,n}}{n-1} \]
+          \[ \sum_{i=1}^{n-1}(x_i - \mu_n)^2 = \sum_{i=1}^{n-1} \Big[(x_i - \mu_{n-1}) + (\mu_{n-1} - \mu_n)\Big]^2 \]
         </div>
-      </section>
-    </main>
-  </div>
-</body>
-</html>
+
+        <p>Sviluppando il quadrato:</p>
+
+        <div class="math-block">
+          \[ \sum_{i=1}^{n-1}(x_i - \mu_n)^2 = \sum_{i=1}^{n-1}(x_i - \mu_{n-1})^2 + 2(\mu_{n-1} - \mu_n)\sum_{i=1}^{n-1}(x_i - \mu_{n-1}) + (n-1)(\mu_{n-1} - \mu_n)^2 \]
+        </div>
+
+        <p>Ma per definizione di media vale:</p>
+
+        <div class="math-block">
+          \[ \sum_{i=1}^{n-1}(x_i - \mu_{n-1}) = 0 \]
+        </div>
+
+        <p>Quindi il termine centrale sparisce e resta:</p>
+
+        <div class="math-block">
+          \[ \sum_{i=1}^{n-1}(x_i - \mu_n)^2 = M_{2,n-1} + (n-1)(\mu_{n-1} - \mu_n)^
