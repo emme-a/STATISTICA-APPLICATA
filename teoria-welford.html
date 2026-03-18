@@ -110,7 +110,7 @@
           \[ \sum_{i=1}^{n-1}(x_i - \mu_n)^2 = \sum_{i=1}^{n-1}(x_i - \mu_{n-1})^2 + 2(\mu_{n-1} - \mu_n)\sum_{i=1}^{n-1}(x_i - \mu_{n-1}) + (n-1)(\mu_{n-1} - \mu_n)^2 \]
         </div>
 
-        <p>Ma per definizione di media vale:</p>
+        <p>Ma per definizione di media vale la regola che la somma degli scarti dalla media è zero:</p>
 
         <div class="math-block">
           \[ \sum_{i=1}^{n-1}(x_i - \mu_{n-1}) = 0 \]
@@ -119,4 +119,60 @@
         <p>Quindi il termine centrale sparisce e resta:</p>
 
         <div class="math-block">
-          \[ \sum_{i=1}^{n-1}(x_i - \mu_n)^2 = M_{2,n-1} + (n-1)(\mu_{n-1} - \mu_n)^
+          \[ \sum_{i=1}^{n-1}(x_i - \mu_n)^2 = M_{2,n-1} + (n-1)(\mu_{n-1} - \mu_n)^2 \]
+        </div>
+
+        <p>Dato che \(\mu_n = \mu_{n-1} + \frac{\delta_n}{n}\), abbiamo:</p>
+
+        <div class="math-block">
+          \[ \mu_{n-1} - \mu_n = -\frac{\delta_n}{n} \]
+        </div>
+
+        <p>Inoltre:</p>
+
+        <div class="math-block">
+          \[ x_n - \mu_n = x_n - \left(\mu_{n-1} + \frac{\delta_n}{n}\right) = \delta_n - \frac{\delta_n}{n} = \delta_n\left(1 - \frac{1}{n}\right) = \delta_n\frac{n-1}{n} \]
+        </div>
+
+        <p>Sostituendo tutto in \(M_{2,n}\):</p>
+
+        <div class="math-block">
+          \[ M_{2,n} = M_{2,n-1} + (n-1)\left(\frac{\delta_n}{n}\right)^2 + \left(\delta_n\frac{n-1}{n}\right)^2 \]
+        </div>
+
+        <p>Raccogliendo i termini:</p>
+
+        <div class="math-block">
+          \[ M_{2,n} = M_{2,n-1} + \delta_n^2 \frac{n-1}{n} \]
+        </div>
+
+        <p>Ma poiché \(x_n - \mu_n = \delta_n \frac{n-1}{n}\), possiamo scrivere la formula finale nella forma classica di Welford:</p>
+
+        <div class="math-block">
+          \[ M_{2,n} = M_{2,n-1} + (x_n - \mu_{n-1})(x_n - \mu_n) \]
+        </div>
+
+        <hr style="border: 0; border-top: 1px solid #ddd; margin: 30px 0;">
+
+        <h3>Varianza finale</h3>
+        <p>Una volta aggiornato \(M_{2,n}\), la varianza si ottiene calcolando i seguenti rapporti:</p>
+
+        <p><strong>Varianza della popolazione:</strong></p>
+        <div class="math-block">
+          \[ \sigma_n^2 = \frac{M_{2,n}}{n} \]
+        </div>
+
+        <p><strong>Varianza campionaria:</strong></p>
+        <div class="math-block">
+          \[ s_n^2 = \frac{M_{2,n}}{n-1} \]
+        </div>
+
+        <h3>Proprietà della media usate</h3>
+        <ul>
+          <li style="margin-bottom: 15px;">
+            Somma dei primi \(n-1\) termini: 
+            <div class="math-block" style="margin: 5px 0;">\[ \sum_{i=1}^{n-1} x_i = (n-1)\mu_{n-1} \]</div>
+          </li>
+          <li style="margin-bottom: 15px;">
+            La somma degli scarti dalla media è zero:
+            <div class="math-block" style="margin: 5px 0;">\[ \sum_{i=1}^{n-1}(x_i - \mu_{n-1}) = 0 \]
