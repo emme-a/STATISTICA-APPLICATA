@@ -1,12 +1,74 @@
 <!DOCTYPE html>
-<html>
+<html lang="it">
 <head>
-    <title>Esercizio DOM</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manipolazione DOM - Statistica Applicata</title>
+    <style>
+                body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            background-color: #f4f4f9; 
+            color: #333; 
+            max-width: 800px; 
+            margin: 0 auto; 
+            padding: 30px; 
+        }
+        h1 { 
+            border-bottom: 2px solid #2c3e50; 
+            padding-bottom: 10px; 
+            color: #2c3e50; 
+        }
+        .pannello-controllo { 
+            background: #ffffff; 
+            padding: 20px; 
+            border-radius: 8px; 
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1); 
+            margin-bottom: 20px; 
+            display: flex; 
+            gap: 10px; 
+            flex-wrap: wrap;
+        }
+        button { 
+            padding: 10px 15px; 
+            border: none; 
+            border-radius: 5px; 
+            background-color: #3498db; 
+            color: white; 
+            cursor: pointer; 
+            font-size: 14px; 
+            font-weight: bold;
+            transition: background-color 0.2s;
+        }
+        button:hover { background-color: #2980b9; }
+        #btnReset { background-color: #7f8c8d; }
+        #btnReset:hover { background-color: #636e72; }
+        
+        /* Il DIV che andremo a manipolare */
+        #div-bersaglio { 
+            background: #ffffff; 
+            padding: 30px; 
+            border-radius: 8px; 
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1); 
+            border-left: 5px solid #bdc3c7;
+            transition: all 0.3s ease; 
+        }
+    </style>
 </head>
 <body>
 
-    <div id="bersaglio">
-        Questo è il testo iniziale. Se vedi questo messaggio, JavaScript NON ha funzionato.
+    <h1>Esercitazione: Manipolazione del DOM</h1>
+    <p>Interfaccia per il test delle manipolazioni dinamiche degli elementi HTML tramite JavaScript.</p>
+
+    <div class="pannello-controllo">
+        <button id="btnTesto">Inserisci Appunti Statistica</button>
+        <button id="btnColore">Evidenzia Contenitore</button>
+        <button id="btnDimensione">Ingrandisci Testo</button>
+        <button id="btnReset">Ripristina Originale</button>
+    </div>
+
+    <div id="div-bersaglio">
+        <h2 id="titolo-bersaglio">Area di Test</h2>
+        <p id="paragrafo-bersaglio">Questo è il contenitore predefinito. Utilizza i controlli nel pannello sovrastante per applicare trasformazioni strutturali e stilistiche al Document Object Model.</p>
     </div>
 
     <script src="script.js"></script>
