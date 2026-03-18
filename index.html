@@ -1,77 +1,330 @@
 <!DOCTYPE html>
 <html lang="it">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Laboratorio Statistica e JS</title>
-    <style>
-        body { 
-            font-family: 'Helvetica Neue', Arial, sans-serif; 
-            background-color: #f8f9fa; 
-            color: #333; 
-            max-width: 800px; 
-            margin: 40px auto; 
-            padding: 20px; 
-        }
-        .controlli { 
-            background: #fff; 
-            padding: 20px; 
-            border-radius: 10px; 
-            box-shadow: 0 4px 6px rgba(0,0,0,0.05); 
-            margin-bottom: 30px; 
-            display: flex; 
-            gap: 15px; 
-            justify-content: center;
-        }
-        button { 
-            padding: 12px 20px; 
-            border: none; 
-            border-radius: 6px; 
-            background-color: #007bff; 
-            color: white; 
-            cursor: pointer; 
-            font-size: 15px; 
-            font-weight: bold;
-            transition: all 0.2s;
-        }
-        button:hover { background-color: #0056b3; transform: translateY(-2px); }
-        #btnReset { background-color: #6c757d; }
-        #btnReset:hover { background-color: #5a6268; }
-        
-        /* Stile del contenitore principale */
-        #display-area { 
-            background: #ffffff; 
-            padding: 40px; 
-            border-radius: 10px; 
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1); 
-            text-align: center;
-            transition: all 0.4s ease; 
-        }
-        #titolo { color: #2c3e50; font-size: 28px; margin-top: 0; }
-        #paragrafo { font-size: 16px; line-height: 1.6; color: #555; text-align: left;}
-        
-        /* Classe per centrare il testo nel welcome */
-        .testo-centrato { text-align: center !important; }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sito Degli Homework Di Alberto Pino</title>
+  <link rel="stylesheet" href="style.css">
+
+  <style>
+    /* Stili per la pagina della dimostrazione */
+    .welford-content {
+      max-width: 950px;
+    }
+
+    #hello-world {
+      font-size: 24px; /* Dimensione iniziale */
+      font-weight: bold;
+      text-align: center;
+      margin: 30px 0 20px 0;
+      transition: all 0.2s ease; /* Fluidità per cambi di colore e dimensione */
+      color: black; /* Colore iniziale */
+    }
+
+    .controlli {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .section {
+      margin-bottom: 40px;
+    }
+
+    .section h2 {
+      margin-bottom: 12px;
+    }
+
+    .code-box {
+      background: #f7f7f7;
+      border: 1px solid #dddddd;
+      border-radius: 8px;
+      padding: 16px;
+      overflow-x: auto;
+    }
+
+    .code-box code {
+      font-family: Consolas, Monaco, monospace;
+      white-space: pre-wrap;
+      line-height: 1.5;
+      display: block;
+    }
+
+    .math-block {
+      margin: 16px 0;
+    }
+  </style>
+
+  <script>
+    window.MathJax = {
+      tex: {
+        inlineMath: [['\\(', '\\)'], ['$', '$']],
+        displayMath: [['\\[', '\\]']]
+      }
+    };
+  </script>
+  <script async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
 </head>
 <body>
+  
+  <div class="layout">
+    <aside class="sidebar">
+      <h2>Menu</h2>
+      <a href="index.html">Home</a>
+      <a href="19-04-dimostrazione-di-welford.html">19-04 - Dimostrazione di Welford</a>
+    </aside>
 
-    <div class="controlli">
-        <button id="btnColore">Cambia Colori</button>
-        <button id="btnDimensione">Testo +</button>
-        <button id="btnTeoria">Mostra Teoria (Welford)</button>
-        <button id="btnReset">Reset / Welcome</button>
-    </div>
+    <main class="content welford-content">
+      
+      <h1 class="welcome-header">Welcome</h1>
 
-    <div id="display-area">
-        <h2 id="titolo">Welcome</h2>
-        <p id="paragrafo" class="testo-centrato">
-            Benvenuto nel pannello di controllo.<br>
-            Usa i pulsanti in alto per manipolare questa pagina HTML tramite JavaScript o per consultare gli appunti di Statistica Applicata.
+      <section class="section">
+        <h2>Esercitazione sulla Dimostrazione di Welford</h2>
+
+        <p>
+          Il primo homework richiede di usare JavaScript per modificare il contenuto
+          di un elemento HTML e provare varie manipolazioni della pagina.
+          Inoltre bisogna linkare il programma come file <strong>.js esterno</strong>
+          e presentare la dimostrazione dell'algoritmo di Welford.
         </p>
-    </div>
 
-    <script src="script.js"></script>
+        <p id="hello-world">Hello World!</p>
 
+        <div class="controlli">
+          <button id="btn-text">Cambia testo</button>
+          <button id="btn-color">Cambia colore</button>
+          <button id="btn-size-plus">Dimensione +</button>
+          <button id="btn-size-minus">Dimensione -</button>
+          <button id="btn-hide">Nascondi / Mostra</button>
+          <button id="btn-reset">Reset</button>
+        </div>
+
+        <p id="status">Stato iniziale della pagina.</p>
+      </section>
+
+      <section class="section">
+        <h2>Dimostrazione di Welford</h2>
+        <p>
+          L'algoritmo di Welford serve a calcolare media e varianza in modo incrementale,
+          cioè aggiornando i valori ogni volta che arriva una nuova osservazione,
+          senza dover ricalcolare tutto da zero.
+        </p>
+        <p>
+          Supponiamo di osservare una sequenza di dati
+          \(x_1, x_2, \dots, x_n\).
+          Indichiamo con \(\mu_n\) la media dei primi \(n\) valori e con \(M_{2,n}\)
+          la somma degli scarti quadratici dalla media:
+        </p>
+        <div class="math-block">
+          \[
+          \mu_n = \frac{1}{n}\sum_{i=1}^{n} x_i
+          \]
+        </div>
+        <div class="math-block">
+          \[
+          M_{2,n} = \sum_{i=1}^{n} (x_i - \mu_n)^2
+          \]
+        </div>
+        <p>
+          L'idea chiave è trovare una formula ricorsiva che permetta di passare da
+          \((\mu_{n-1}, M_{2,n-1})\) a \((\mu_n, M_{2,n})\) dopo l'arrivo del nuovo dato \(x_n\).
+        </p>
+
+        <h3>Aggiornamento della media</h3>
+        <p>
+          Partiamo dalla definizione:
+        </p>
+        <div class="math-block">
+          \[
+          \mu_n = \frac{1}{n}\sum_{i=1}^{n} x_i
+          = \frac{1}{n}\left(\sum_{i=1}^{n-1} x_i + x_n\right)
+          \]
+        </div>
+        <p>
+          Poiché
+          \[
+          \sum_{i=1}^{n-1} x_i = (n-1)\mu_{n-1},
+          \]
+          otteniamo:
+        </p>
+        <div class="math-block">
+          \[
+          \mu_n = \frac{(n-1)\mu_{n-1} + x_n}{n}
+          \]
+        </div>
+        <p>
+          Riscrivendo la formula in modo più utile:
+        </p>
+        <div class="math-block">
+          \[
+          \mu_n = \mu_{n-1} + \frac{x_n - \mu_{n-1}}{n}
+          \]
+        </div>
+        <p>
+          Se definiamo
+          \[
+          \delta_n = x_n - \mu_{n-1},
+          \]
+          allora:
+        </p>
+        <div class="math-block">
+          \[
+          \mu_n = \mu_{n-1} + \frac{\delta_n}{n}
+          \]
+        </div>
+
+        <h3>Aggiornamento della quantità quadratica</h3>
+        <p>
+          Ora vogliamo aggiornare
+          \[
+          M_{2,n} = \sum_{i=1}^{n}(x_i - \mu_n)^2.
+          \]
+          Separiamo l'ultimo termine:
+        </p>
+        <div class="math-block">
+          \[
+          M_{2,n}
+          =
+          \sum_{i=1}^{n-1}(x_i - \mu_n)^2 + (x_n - \mu_n)^2
+          \]
+        </div>
+        <p>
+          Per i primi \(n-1\) termini scriviamo:
+        </p>
+        <div class="math-block">
+          \[
+          x_i - \mu_n = (x_i - \mu_{n-1}) + (\mu_{n-1} - \mu_n)
+          \]
+        </div>
+        <p>
+          Quindi:
+        </p>
+        <div class="math-block">
+          \[
+          \sum_{i=1}^{n-1}(x_i - \mu_n)^2
+          =
+          \sum_{i=1}^{n-1}
+          \Big[(x_i - \mu_{n-1}) + (\mu_{n-1} - \mu_n)\Big]^2
+          \]
+        </div>
+        <p>
+          Sviluppando il quadrato:
+        </p>
+        <div class="math-block">
+          \[
+          \sum_{i=1}^{n-1}(x_i - \mu_n)^2
+          =
+          \sum_{i=1}^{n-1}(x_i - \mu_{n-1})^2
+          +
+          2(\mu_{n-1} - \mu_n)\sum_{i=1}^{n-1}(x_i - \mu_{n-1})
+          +
+          (n-1)(\mu_{n-1} - \mu_n)^2
+          \]
+        </div>
+        <p>
+          Ma per definizione di media vale:
+        </p>
+        <div class="math-block">
+          \[
+          \sum_{i=1}^{n-1}(x_i - \mu_{n-1}) = 0
+          \]
+        </div>
+        <p>
+          Quindi il termine centrale sparisce e resta:
+        </p>
+        <div class="math-block">
+          \[
+          \sum_{i=1}^{n-1}(x_i - \mu_n)^2
+          =
+          M_{2,n-1} + (n-1)(\mu_{n-1} - \mu_n)^2
+          \]
+        </div>
+        <p>
+          Dato che
+          \[
+          \mu_n = \mu_{n-1} + \frac{\delta_n}{n},
+          \]
+          abbiamo:
+        </p>
+        <div class="math-block">
+          \[
+          \mu_{n-1} - \mu_n = -\frac{\delta_n}{n}
+          \]
+        </div>
+        <p>
+          Inoltre:
+        </p>
+        <div class="math-block">
+          \[
+          x_n - \mu_n
+          =
+          x_n - \left(\mu_{n-1} + \frac{\delta_n}{n}\right)
+          =
+          \delta_n - \frac{\delta_n}{n}
+          =
+          \delta_n\left(1 - \frac{1}{n}\right)
+          =
+          \delta_n\frac{n-1}{n}
+          \]
+        </div>
+        <p>
+          Sostituendo tutto in \(M_{2,n}\):
+        </p>
+        <div class="math-block">
+          \[
+          M_{2,n}
+          =
+          M_{2,n-1}
+          +
+          (n-1)\left(\frac{\delta_n}{n}\right)^2
+          +
+          \left(\delta_n\frac{n-1}{n}\right)^2
+          \]
+        </div>
+        <p>
+          Raccogliendo i termini:
+        </p>
+        <div class="math-block">
+          \[
+          M_{2,n}
+          =
+          M_{2,n-1}
+          +
+          \delta_n^2 \frac{n-1}{n}
+          \]
+        </div>
+        <p>
+          Ma poiché
+          \[
+          x_n - \mu_n = \delta_n \frac{n-1}{n},
+          \]
+          possiamo scrivere la formula finale nella forma classica di Welford:
+        </p>
+        <div class="math-block">
+          \[
+          M_{2,n} = M_{2,n-1} + (x_n - \mu_{n-1})(x_n - \mu_n)
+          \]
+        </div>
+
+        <h3>Varianza finale</h3>
+        <p>
+          Una volta aggiornato \(M_{2,n}\), la varianza si ottiene così:
+        </p>
+        <div class="math-block">
+          \[
+          \sigma_n^2 = \frac{M_{2,n}}{n}
+          \qquad\text{(varianza della popolazione)}
+          \]
+        </div>
+        <div class="math-block">
+          \[
+          s_n^2 = \frac{M_{2,n}}{n-1}
+          \qquad\text{(varianza campionaria)}
+          \]
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script src="script.js"></script>
 </body>
 </html>
