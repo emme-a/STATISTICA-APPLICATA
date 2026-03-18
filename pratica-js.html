@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pratica JS - Homework</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="layout">
+    <aside class="sidebar">
+      <h2>Menù Consegne</h2>
+      <a href="index.html">🏠 Home (Welcome)</a>
+      <a href="pratica-js.html">💻 Esercizio: Pratica JS</a>
+      <a href="teoria-welford.html">📐 Teoria: Dim. Welford</a>
+    </aside>
+
+    <main class="content">
+      <section class="section">
+        <h2>Consegna: Manipolazione del DOM</h2>
+        <p>In questa sezione testiamo le modifiche al contenuto della pagina HTML tramite il file JavaScript esterno.</p>
+
+        <p id="hello-world">Hello World!</p>
+
+        <div class="controlli">
+          <button id="btn-text">Cambia testo</button>
+          <button id="btn-color">Cambia colore</button>
+          <button id="btn-size-plus">Dimensione +</button>
+          <button id="btn-size-minus">Dimensione -</button>
+          <button id="btn-hide">Nascondi / Mostra</button>
+          <button id="btn-reset">Reset</button>
+        </div>
+
+        <p id="status">Stato iniziale della pagina.</p>
+      </section>
+    </main>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
