@@ -1,44 +1,57 @@
-// 1. Selezioniamo tutti gli elementi necessari dalla pagina
-const divBersaglio = document.getElementById('div-bersaglio');
-const titoloBersaglio = document.getElementById('titolo-bersaglio');
-const paragrafoBersaglio = document.getElementById('paragrafo-bersaglio');
+// Selezioniamo gli elementi
+const displayArea = document.getElementById('display-area');
+const titolo = document.getElementById('titolo');
+const paragrafo = document.getElementById('paragrafo');
 
-const btnTesto = document.getElementById('btnTesto');
 const btnColore = document.getElementById('btnColore');
 const btnDimensione = document.getElementById('btnDimensione');
+const btnTeoria = document.getElementById('btnTeoria');
 const btnReset = document.getElementById('btnReset');
 
-// Salviamo il contenuto originale in modo da poterlo ripristinare col tasto Reset
-const titoloOriginale = titoloBersaglio.innerHTML;
-const testoOriginale = paragrafoBersaglio.innerHTML;
+// Salviamo il Welcome state
+const titoloWelcome = titolo.innerHTML;
+const testoWelcome = paragrafo.innerHTML;
 
-// MANIPOLAZIONE 1: Modifica del contenuto testuale
-btnTesto.addEventListener('click', function() {
-    titoloBersaglio.innerHTML = "Algoritmo di Welford-Knuth";
-    paragrafoBersaglio.innerHTML = "L'algoritmo di Welford è un metodo per il calcolo della varianza in un singolo passaggio (online algorithm).<br><br>È particolarmente utile nell'analisi statistica applicata quando si elaborano flussi continui di dati, poiché previene l'instabilità numerica (catastrophic cancellation) tipica della formula standard.";
-});
-
-// MANIPOLAZIONE 2: Modifica degli stili e dei colori (CSS via JS)
+// 1. Tasto Colore: Cambia radicalmente i colori (Testo e Sfondo)
 btnColore.addEventListener('click', function() {
-    divBersaglio.style.backgroundColor = "#e8f4f8"; // Sfondo azzurro chiaro
-    divBersaglio.style.borderLeftColor = "#2980b9"; // Cambia il colore del bordo laterale
-    titoloBersaglio.style.color = "#2980b9";        // Cambia il colore del titolo
+    displayArea.style.backgroundColor = "#2c3e50"; // Sfondo scuro elegante
+    titolo.style.color = "#f1c40f";                // Titolo giallo oro
+    paragrafo.style.color = "#ecf0f1";             // Testo bianco chiaro
 });
 
-// MANIPOLAZIONE 3: Modifica delle dimensioni
+// 2. Tasto Dimensione: Ingrandisce il testo
 btnDimensione.addEventListener('click', function() {
-    paragrafoBersaglio.style.fontSize = "18px";
-    paragrafoBersaglio.style.lineHeight = "1.8";
+    paragrafo.style.fontSize = "22px";
+    paragrafo.style.lineHeight = "1.8";
 });
 
-// MANIPOLAZIONE 4: Reset (Rimuove tutte le modifiche)
-btnReset.addEventListener('click', function() {
-    // Ripristiniamo il testo
-    titoloBersaglio.innerHTML = titoloOriginale;
-    paragrafoBersaglio.innerHTML = testoOriginale;
+// 3. Tasto Teoria: Inserisce la dimostrazione di Welford/Knuth
+btnTeoria.addEventListener('click', function() {
+    // Togliamo la centratura per rendere la teoria leggibile come un libro
+    paragrafo.classList.remove('testo-centrato');
     
-    // Ripristiniamo gli stili rimuovendo le modifiche inline fatte dal JS
-    divBersaglio.removeAttribute("style");
-    titoloBersaglio.removeAttribute("style");
-    paragrafoBersaglio.removeAttribute("style");
+    titolo.innerHTML = "Relazione di ricorrenza di Welford";
+    paragrafo.innerHTML = `
+        L'algoritmo permette di calcolare la varianza online, aggiornando la Somma dei Quadrati degli Scarti (S<sub>n</sub>).<br><br>
+        <b>Formula:</b><br>
+        S<sub>n</sub> = S<sub>n-1</sub> + (x<sub>n</sub> - x̄<sub>n-1</sub>)(x<sub>n</sub> - x̄<sub>n</sub>)<br><br>
+        <b>Dimostrazione semplificata:</b><br>
+        1. Si parte da S<sub>n</sub> = Σ(x<sub>i</sub> - x̄<sub>n</sub>)<sup>2</sup>.<br>
+        2. Si aggiunge e si sottrae la media precedente x̄<sub>n-1</sub> dentro la parentesi.<br>
+        3. Si sviluppa il quadrato del binomio. Poiché la somma degli scarti dalla media è zero, il termine centrale si annulla.<br>
+        4. Rimane S<sub>n-1</sub> e una coda finale che, applicando la regola di aggiornamento della media, si semplifica algebricamente in (x<sub>n</sub> - x̄<sub>n-1</sub>)(x<sub>n</sub> - x̄<sub>n</sub>).
+    `;
+});
+
+// 4. Tasto Reset: Torna alla schermata di Welcome
+btnReset.addEventListener('click', function() {
+    // Ripristiniamo testi
+    titolo.innerHTML = titoloWelcome;
+    paragrafo.innerHTML = testoWelcome;
+    paragrafo.classList.add('testo-centrato');
+    
+    // Ripristiniamo colori e dimensioni pulendo gli stili applicati
+    displayArea.removeAttribute("style");
+    titolo.removeAttribute("style");
+    paragrafo.removeAttribute("style");
 });
