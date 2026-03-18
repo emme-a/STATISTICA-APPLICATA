@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Esercizio DOM</title>
+</head>
+<body>
+
+    <div id="bersaglio">
+        Questo è il testo iniziale. Se vedi questo messaggio, JavaScript NON ha funzionato.
+    </div>
+
+    <script src="script.js"></script>
+
+</body>
+</html>
