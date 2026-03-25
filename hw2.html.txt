@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>HW2 - Variabili e Varianza</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+  <div class="layout">
+    
+    <aside class="sidebar">
+      <h2>Menù Consegne</h2>
+      <a href="index.html">🏠 Home (Welcome)</a>
+      <a href="pratica-js.html">💻 HW1: Pratica JS</a>
+      <a href="teoria-welford.html">📐 HW1: Teoria Welford</a>
+      <a href="hw2.html">📊 HW2: Variabili e Varianza</a>
+    </aside>
+
+    <main class="content">
+      <h1 style="border-bottom: 2px solid #ddd; padding-bottom: 10px;">Homework 2: Statistica Computazionale</h1>
+
+      <section class="section">
+        <h2>Parte A: Varianza Naive vs Welford (Caso Patologico)</h2>
+        <p>Generiamo un array di numeri con una media enorme (10<sup>9</sup>) e una varianza molto piccola. La formula "naive" (somma dei quadrati) soffrirà di <strong>cancellazione catastrofica</strong>, mentre Welford manterrà la precisione.</p>
+        
+        <button id="btn-pathological">Esegui Test Patologico</button>
+        
+        <div id="output-part-a" style="background: #f8f9fa; padding: 15px; border-left: 4px solid #e74c3c; margin-top: 15px; font-family: monospace; white-space: pre-wrap;">
+In attesa di eseguire il test...
+        </div>
+      </section>
+
+      <hr style="border: 0; border-top: 1px solid #ddd; margin: 40px 0;">
+
+      <section class="section">
+        <h2>Parte B: Generazione di Variabili da U[0,1)</h2>
+        <p>Seleziona una distribuzione. Il programma genererà 10.000 campioni partendo dal generatore uniforme nativo di JS e ne verificherà la forma tramite un istogramma.</p>
+        
+        <div class="controlli" style="text-align: left;">
+          <select id="dist-select" style="padding: 8px; margin-right: 10px; font-size: 14px;">
+            <option value="uniform">Uniforme Continua [0, 10)</option>
+            <option value="normal">Normale (Box-Muller) μ=0, σ=1</option>
+            <option value="exponential">Esponenziale (Inv. Transform) λ=1</option>
+            <option value="poisson">Poisson (Algoritmo Discreto) λ=4</option>
+          </select>
+          <button id="btn-generate">Genera e Mostra Grafico</button>
+        </div>
+
+        <div id="output-part-b" style="background: #e8f4f8; padding: 15px; border-left: 4px solid #3498db; margin-top: 15px; margin-bottom: 20px; font-family: monospace; white-space: pre-wrap;">
+Statistiche del campione appariranno qui...
+        </div>
+
+        <div style="width: 100%; max-width: 800px; background: white; padding: 20px; border: 1px solid #ddd; border-radius: 8px;">
+          <canvas id="distChart"></canvas>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <script src="hw2.js"></script>
+</body>
+</html>
