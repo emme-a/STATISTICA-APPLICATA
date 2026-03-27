@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>HW3 - Random Walk e Mercati</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+  <div class="layout">
+    
+    <aside class="sidebar">
+      <h2>Menù Consegne</h2>
+      <a href="index.html">🏠 Home (Welcome)</a>
+      <a href="pratica-js.html">💻 HW1: Pratica JS</a>
+      <a href="teoria-welford.html">📐 HW1: Teoria Welford</a>
+      <a href="hw2.html">📊 HW2: Variabili e Varianza</a>
+      <a href="hw3.html">📈 HW3: Random Walk e Mercati</a>
+    </aside>
+
+    <main class="content">
+      <h1 style="border-bottom: 2px solid #ddd; padding-bottom: 10px;">Homework 3: Random Walk e Finanza</h1>
+
+      <section class="section">
+        <h2>Applicazione: Simulazione Random Walk (Passeggiata Aleatoria)</h2>
+        <p>In questo esperimento simuliamo una curva di prezzo finanziario utilizzando un processo stocastico. Partendo da un valore iniziale $x_0 = 1000$, ad ogni istante temporale $i$ il prezzo subirà una variazione pseudo-casuale $S_i \in \{-1, +1\}$ con probabilità del 50%.</p>
+        <p><strong>Equazione:</strong> $x_i = x_{i-1} + S_i$</p>
+        
+        <button id="btn-generate-rw" style="padding: 10px 15px; background: #27ae60; color: white; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; margin-bottom: 15px;">Genera Nuovo Percorso (1000 step)</button>
+        
+        <div style="width: 100%; max-width: 800px; background: white; padding: 20px; border: 1px solid #ddd; border-radius: 8px;">
+          <canvas id="randomWalkChart"></canvas>
+        </div>
+      </section>
+
+      <hr style="border: 0; border-top: 1px solid #ddd; margin: 40px 0;">
+
+      <section class="section">
+        <h2>Teoria: Introduzione agli Exchange e agli Strumenti Finanziari</h2>
+
+        <h3>1. I principali mercati finanziari del mondo: ruolo e funzionamento</h3>
+        <p>I mercati finanziari (o <em>Exchange</em>) sono infrastrutture, fisiche o telematiche, dove si incontrano la domanda e l'offerta di strumenti finanziari. Il loro ruolo principale è <strong>allocare il capitale in modo efficiente</strong>, permettendo alle aziende di finanziarsi e agli investitori di impiegare i propri risparmi cercando un rendimento. Garantiscono inoltre liquidità, trasparenza sui prezzi e regolamentazione.</p>
+        <ul>
+          <li><strong>NYSE (New York Stock Exchange):</strong> Il più grande mercato azionario al mondo per capitalizzazione. Famoso per le <em>blue-chip</em> (aziende storiche e consolidate).</li>
+          <li><strong>NASDAQ:</strong> Il principale mercato telematico americano, focalizzato principalmente sui titoli tecnologici e dell'innovazione (Apple, Microsoft, Google).</li>
+          <li><strong>LSE (London Stock Exchange) & Euronext:</strong> I principali hub europei per lo scambio di azioni e derivati.</li>
+          <li><strong>CME (Chicago Mercantile Exchange):</strong> Il mercato di riferimento globale per i derivati (futures e opzioni) su materie prime, indici e valute.</li>
+        </ul>
+
+        <h3>2. Il ruolo e la funzione dei Broker Finanziari</h3>
+        <p>Un investitore privato (retail) non può accedere direttamente all'Exchange per comprare o vendere. Ha bisogno di un <strong>Broker</strong>, un intermediario autorizzato e regolamentato. Le funzioni principali di un broker sono:</p>
+        <ul>
+          <li><strong>Esecuzione degli ordini:</strong> Ricevono l'ordine dal cliente (es. "Compra 10 azioni Apple") e lo instradano verso il mercato (routing) per trovare una controparte.</li>
+          <li><strong>Fornitura di Piattaforme:</strong> Offrono software per l'analisi dei grafici e l'inserimento degli ordini in tempo reale.</li>
+          <li><strong>Marginazione e Leva:</strong> Molti broker permettono di operare in "marginazione", prestando capitale all'investitore per amplificare l'esposizione a mercato (leva finanziaria).</li>
+          <li><strong>Custodia:</strong> Agiscono (direttamente o tramite terzi) come depositari dei titoli acquistati per conto del cliente.</li>
+        </ul>
+
+        <h3>3. Principali strumenti finanziari e i loro utilizzi</h3>
+        <p>Sui mercati vengono scambiati diversi asset (<em>asset class</em>), ognuno con profili di rischio e funzioni specifiche:</p>
+        <ul>
+          <li><strong>Azioni (Equities):</strong> Rappresentano quote di proprietà di una società (S.p.A.). L'investitore partecipa agli utili (tramite i dividendi) e al rischio d'impresa. <em>Utilizzo:</em> Crescita del capitale a lungo termine.</li>
+          <li><strong>Obbligazioni (Bonds):</strong> Sono titoli di debito emessi da Stati o Aziende. L'investitore presta denaro in cambio di una cedola periodica (interesse) e della restituzione del capitale a scadenza. <em>Utilizzo:</em> Flusso di cassa stabile e conservazione del capitale.</li>
+          <li><strong>Derivati (Futures e Opzioni):</strong> Contratti il cui valore "deriva" da un'attività sottostante (un'azione, una materia prima, un indice). Non si possiede l'asset fisico, ma si specula sul suo prezzo futuro. <em>Utilizzo:</em> Speculazione direzionale (anche al ribasso) o copertura del rischio (Hedging).</li>
+          <li><strong>ETF (Exchange Traded Funds):</strong> Fondi d'investimento a gestione passiva che replicano l'andamento di un intero indice di mercato (es. S&P 500) o settore. <em>Utilizzo:</em> Diversificazione istantanea a basso costo.</li>
+          <li><strong>Forex (Foreign Exchange):</strong> Il mercato delle valute estere. Si scambiano coppie di valute (es. EUR/USD). <em>Utilizzo:</em> Copertura dal rischio di cambio per le aziende (import/export) o speculazione a breve termine.</li>
+        </ul>
+      </section>
+
+    </main>
+  </div>
+  <script src="hw3.js"></script>
+</body>
+</html>
