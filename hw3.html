@@ -5,7 +5,66 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>HW3 - Random Walk e Mercati</title>
   <link rel="stylesheet" href="style.css">
+  
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  
+  <script>
+    window.MathJax = {
+      tex: {
+        inlineMath: [['\\(', '\\)'], ['$', '$']],
+        displayMath: [['\\[', '\\]']]
+      }
+    };
+  </script>
+  <script async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+  <style>
+    /* Stili specifici per la Dashboard di Simulazione */
+    .dashboard-panel {
+      display: flex;
+      gap: 20px;
+      margin-bottom: 20px;
+      align-items: flex-start;
+      flex-wrap: wrap;
+    }
+
+    .chart-container {
+      flex: 1;
+      min-width: 450px;
+      background: white;
+      padding: 20px;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+    }
+
+    .stats-container {
+      width: 280px;
+      background: #f8f9fa;
+      padding: 20px;
+      border-radius: 8px;
+      border-left: 4px solid #27ae60;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    }
+
+    .stats-container h3 {
+      margin-top: 0;
+      color: #333;
+      border-bottom: 2px solid #ddd;
+      padding-bottom: 10px;
+    }
+
+    .stat-item {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 10px;
+      font-size: 15px;
+    }
+
+    .stat-label { font-weight: bold; color: #555; }
+    .stat-value { font-family: monospace; color: #27ae60; font-weight: bold; }
+
+    #rw-formula { font-size: 1.2em; text-align: center; margin: 15px 0; }
+  </style>
 </head>
 <body>
   <div class="layout">
@@ -23,15 +82,56 @@
       <h1 style="border-bottom: 2px solid #ddd; padding-bottom: 10px;">Homework 3: Random Walk e Finanza</h1>
 
       <section class="section">
-        <h2>Applicazione: Simulazione Random Walk (Passeggiata Aleatoria)</h2>
-        <p>In questo esperimento simuliamo una curva di prezzo finanziario utilizzando un processo stocastico. Partendo da un valore iniziale $x_0 = 1000$, ad ogni istante temporale $i$ il prezzo subirà una variazione pseudo-casuale $S_i \in \{-1, +1\}$ con probabilità del 50%.</p>
-        <p><strong>Equazione:</strong> $x_i = x_{i-1} + S_i$</p>
+        <h2>Dashboard di Simulazione: Passeggiata Aleatoria (5 Cammini)</h2>
+        <p>In questa dashboard professionale, simuliamo 5 percorsi casuali di prezzo. Partendo da un valore iniziale \( x_0 = 1000 \), ogni percorso \( x_i \) segue l'equazione:</p>
         
-        <button id="btn-generate-rw" style="padding: 10px 15px; background: #27ae60; color: white; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; margin-bottom: 15px;">Genera Nuovo Percorso (1000 step)</button>
-        
-        <div style="width: 100%; max-width: 800px; background: white; padding: 20px; border: 1px solid #ddd; border-radius: 8px;">
-          <canvas id="randomWalkChart"></canvas>
+        <div id="rw-formula">
+          \[ x_i = x_{i-1} + S_i \]
         </div>
+        <p>dove \( S_i \in \{-1, +1\} \) con probabilità del 50%. La linea scura è il percorso principale analizzato; le altre sono ombre proiettate per mostrare la variabilità del processo.</p>
+        
+        <button id="btn-generate-rw" style="padding: 10px 15px; background: #27ae60; color: white; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; margin-bottom: 20px;">Rigenera Simulazione</button>
+
+        <div class="dashboard-panel">
+          
+          <div class="chart-container">
+            <canvas id="randomWalkChart"></canvas>
+          </div>
+
+          <div class="stats-container">
+            <h3>Analisi Quantitativa</h3>
+            <div class="stat-item">
+              <span class="stat-label">Step Totali (i):</span>
+              <span class="stat-value">1000</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-label">Valore Iniziale \( x_0 \):</span>
+              <span class="stat-value">1000</span>
+            </div>
+            <hr>
+            <div class="stat-item">
+              <span class="stat-label">Prezzo Finale \( x_{1000} \):</span>
+              <span id="final-price" class="stat-value">--</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-label">Variazione Assoluta:</span>
+              <span id="price-change" class="stat-value">--</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-label">Prezzo Massimo:</span>
+              <span id="max-price" class="stat-value">--</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-label">Prezzo Minimo:</span>
+              <span id="min-price" class="stat-value">--</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-label">Prezzo Medio Finale:</span>
+              <span id="mean-price" class="stat-value">--</span>
+            </div>
+          </div>
+        </div>
+
       </section>
 
       <hr style="border: 0; border-top: 1px solid #ddd; margin: 40px 0;">
@@ -42,7 +142,7 @@
         <h3>1. I principali mercati finanziari del mondo: ruolo e funzionamento</h3>
         <p>I mercati finanziari (o <em>Exchange</em>) sono infrastrutture, fisiche o telematiche, dove si incontrano la domanda e l'offerta di strumenti finanziari. Il loro ruolo principale è <strong>allocare il capitale in modo efficiente</strong>, permettendo alle aziende di finanziarsi e agli investitori di impiegare i propri risparmi cercando un rendimento. Garantiscono inoltre liquidità, trasparenza sui prezzi e regolamentazione.</p>
         <ul>
-          <li><strong>NYSE (New York Stock Exchange):</strong> Il più grande mercato azionario al mondo per capitalizzazione. Famoso per le <em>blue-chip</em> (aziende storiche e consolidate).</li>
+          <li><strong>NYSE (New York Stock Exchange):</strong> Il più grande mercato azionario al mondo per capitalizzazione. Famoso per le <em>blue-chip</em> (azienda storiche e consolidate).</li>
           <li><strong>NASDAQ:</strong> Il principale mercato telematico americano, focalizzato principalmente sui titoli tecnologici e dell'innovazione (Apple, Microsoft, Google).</li>
           <li><strong>LSE (London Stock Exchange) & Euronext:</strong> I principali hub europei per lo scambio di azioni e derivati.</li>
           <li><strong>CME (Chicago Mercantile Exchange):</strong> Il mercato di riferimento globale per i derivati (futures e opzioni) su materie prime, indici e valute.</li>
