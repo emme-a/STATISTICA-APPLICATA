@@ -1,12 +1,5 @@
-const canvas = document.getElementById('abmCanvas');
-const ctx = canvas.getContext('2d');
-
-// Parametri del grafico
-const width = canvas.width;
-const height = canvas.height;
-const padding = 40;
-const graphWidth = width - 2 * padding;
-const graphHeight = height - 2 * padding;
+// Variabili globali che inizializzeremo in modo sicuro
+let canvas, ctx, width, height, padding, graphWidth, graphHeight;
 
 // Confini di visualizzazione
 const yMax = 3.5;  // Asse Y da -3.5 a +3.5
@@ -116,6 +109,8 @@ let totalSteps = 0;
 
 // Logica per simulare e animare i percorsi
 function startSimulation() {
+    if (!ctx) return; // Sicurezza extra
+
     // Ferma eventuali animazioni precedenti
     if (animationId) cancelAnimationFrame(animationId);
 
@@ -188,8 +183,30 @@ function animate() {
     }
 }
 
-// Event Listeners
-document.getElementById('btn-simulate').addEventListener('click', startSimulation);
+// ==========================================
+// INIZIALIZZAZIONE SICURA (Avvia tutto SOLO quando l'HTML è pronto)
+// ==========================================
+document.addEventListener('DOMContentLoaded', () => {
+    canvas = document.getElementById('abmCanvas');
+    
+    // Se non trova il canvas, ferma tutto senza far crashare il sito
+    if (!canvas) {
+        console.error("Errore: Canvas 'abmCanvas' non trovato nella pagina.");
+        return; 
+    }
 
-// Inizializzazione al caricamento della pagina
-document.addEventListener('DOMContentLoaded', startSimulation);
+    ctx = canvas.getContext('2d');
+
+    // Imposta le dimensioni in base al canvas HTML
+    width = canvas.width;
+    height = canvas.height;
+    padding = 40;
+    graphWidth = width - 2 * padding;
+    graphHeight = height - 2 * padding;
+
+    // Collega il bottone
+    document.getElementById('btn-simulate').addEventListener('click', startSimulation);
+
+    // Avvia la prima simulazione in automatico
+    startSimulation();
+});
