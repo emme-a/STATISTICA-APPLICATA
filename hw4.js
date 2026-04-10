@@ -1,48 +1,59 @@
 let abmChart = null;
 
+// Funzione matematica per generare il Random Walk Scalato
 function simulateScaledRandomWalk(n) {
     const dataPoints = [];
-    const labels = [];
     let currentSum = 0;
-    
-    // Il fattore di scala radice quadrata di n
     const scaleFactor = Math.sqrt(n);
 
-    // Inizializzazione al tempo t=0
+    // Partenza al tempo 0, valore 0
     dataPoints.push(0);
-    labels.push(0);
 
     for (let k = 1; k <= n; k++) {
-        // Variabile di Rademacher: -1 o +1 con probabilità 50%
+        // Rademacher: -1 o +1
         const step = Math.random() < 0.5 ? -1 : 1;
-        
-        // Somma cumulativa S_k
         currentSum += step;
         
-        // Scalatura per far convergere la varianza: W_n(t) = S_k / sqrt(n)
+        // Applichiamo la formula di Donsker: S_k / sqrt(n)
         const scaledValue = currentSum / scaleFactor;
-        
-        // Tempo normalizzato t in [0, 1]
-        const t = k / n;
-        
         dataPoints.push(scaledValue);
-        
-        // Per non appesantire il rendering del browser con le etichette dell'asse X,
-        // ne stampiamo solo alcune formattate, oppure usiamo direttamente t
-        labels.push(t.toFixed(3));
     }
+    return dataPoints;
+}
 
-    return { labels, dataPoints };
+// Funzione per generare le Bande di Confidenza Teoriche (Inviluppo)
+// Il Moto Browniano ha varianza t, quindi deviazione standard sqrt(t).
+// Il limite al 95% è circa 1.96 * sqrt(t).
+function generateTheoreticalEnvelope(n, isUpper) {
+    const dataPoints = [];
+    dataPoints.push(0);
+    const multiplier = isUpper ? 1.96 : -1.96;
+
+    for (let k = 1; k <= n; k++) {
+        const t = k / n;
+        dataPoints.push(multiplier * Math.sqrt(t));
+    }
+    return dataPoints;
 }
 
 function updateChart() {
     const selectEl = document.getElementById('step-select');
     const n = parseInt(selectEl.value);
 
-    // Generiamo 3 percorsi simultanei per far vedere l'invarianza della dispersione
+    // Asse temporale t (da 0 a 1)
+    const labels = [];
+    for (let k = 0; k <= n; k++) {
+        labels.push((k / n).toFixed(3));
+    }
+
+    // Generiamo 3 percorsi simulati
     const path1 = simulateScaledRandomWalk(n);
     const path2 = simulateScaledRandomWalk(n);
     const path3 = simulateScaledRandomWalk(n);
+
+    // Generiamo l'inviluppo teorico
+    const upperEnvelope = generateTheoreticalEnvelope(n, true);
+    const lowerEnvelope = generateTheoreticalEnvelope(n, false);
 
     const ctx = document.getElementById('abmChart').getContext('2d');
     
@@ -50,69 +61,105 @@ function updateChart() {
         abmChart.destroy();
     }
 
+    // Ottimizzazioni per Chart.js se n è molto grande
+    const disableAnimations = n > 5000;
+
     abmChart = new Chart(ctx, {
         type: 'line',
         data: {
-            // L'asse temporale è lo stesso per tutti e va da 0 a 1
-            labels: path1.labels, 
+            labels: labels, 
             datasets: [
+                // I 3 percorsi simulati
                 {
-                    label: 'Percorso Browniano 1',
-                    data: path1.dataPoints,
-                    borderColor: 'rgba(142, 68, 173, 0.9)', // Viola scuro
+                    label: 'Simulazione 1',
+                    data: path1,
+                    borderColor: 'rgba(41, 128, 185, 0.8)', // Blu
                     borderWidth: 1.5,
                     pointRadius: 0,
                     fill: false,
                     tension: 0
                 },
                 {
-                    label: 'Percorso Browniano 2',
-                    data: path2.dataPoints,
-                    borderColor: 'rgba(41, 128, 185, 0.6)', // Blu trasparente
-                    borderWidth: 1,
+                    label: 'Simulazione 2',
+                    data: path2,
+                    borderColor: 'rgba(39, 174, 96, 0.8)', // Verde
+                    borderWidth: 1.5,
                     pointRadius: 0,
                     fill: false,
                     tension: 0
                 },
                 {
-                    label: 'Percorso Browniano 3',
-                    data: path3.dataPoints,
-                    borderColor: 'rgba(39, 174, 96, 0.6)', // Verde trasparente
-                    borderWidth: 1,
+                    label: 'Simulazione 3',
+                    data: path3,
+                    borderColor: 'rgba(230, 126, 34, 0.8)', // Arancio
+                    borderWidth: 1.5,
                     pointRadius: 0,
                     fill: false,
                     tension: 0
+                },
+                // Le 2 Bande di Confidenza (Inviluppo)
+                {
+                    label: 'Confidenza Teorica (+1.96σ)',
+                    data: upperEnvelope,
+                    borderColor: 'rgba(231, 76, 60, 1)', // Rosso
+                    borderWidth: 2,
+                    borderDash: [5, 5], // Linea tratteggiata
+                    pointRadius: 0,
+                    fill: false,
+                    tension: 0.4
+                },
+                {
+                    label: 'Confidenza Teorica (-1.96σ)',
+                    data: lowerEnvelope,
+                    borderColor: 'rgba(231, 76, 60, 1)', // Rosso
+                    borderWidth: 2,
+                    borderDash: [5, 5],
+                    pointRadius: 0,
+                    fill: false,
+                    tension: 0.4
                 }
             ]
         },
         options: {
             responsive: true,
             maintainAspectRatio: false,
-            animation: {
-                // Riduciamo il tempo di animazione se n è molto grande per non far laggare il browser
-                duration: n > 5000 ? 0 : 500
-            },
+            // Disabilitiamo le animazioni e i tooltip per evitare blocchi del browser con 20000 punti
+            animation: disableAnimations ? false : undefined,
+            normalized: true, // Aumenta drasticamente le performance
+            parsing: false,   // Salta il parsing automatico dei dati per aumentare la velocità
             interaction: {
                 mode: 'nearest',
                 intersect: false
             },
+            elements: {
+                line: {
+                    borderJoinStyle: 'round'
+                }
+            },
             scales: {
                 x: {
-                    title: { display: true, text: 'Tempo normalizzato t ∈ [0, 1]', font: { weight: 'bold' } },
-                    // Mostriamo al massimo 10 etichette sull'asse X per evitare sovrapposizioni
-                    ticks: { maxTicksLimit: 10 }
+                    title: { display: true, text: 'Tempo (t)', font: { size: 14, weight: 'bold' } },
+                    ticks: {
+                        maxTicksLimit: 10,
+                        callback: function(value, index, values) {
+                            // Rende più pulite le etichette dell'asse X
+                            return (index / n).toFixed(1);
+                        }
+                    }
                 },
                 y: {
-                    title: { display: true, text: 'Valore Scalato S_k / √n', font: { weight: 'bold' } },
-                    // Fissiamo arbitrariamente una scala Y per far notare visivamente 
-                    // che al crescere di n il range verticale RIMANE STABILE tra ~ -3 e +3
+                    title: { display: true, text: 'Valore Scalato (S_k / √n)', font: { size: 14, weight: 'bold' } },
                     suggestedMin: -3,
                     suggestedMax: 3
                 }
             },
             plugins: {
+                legend: {
+                    position: 'top',
+                    labels: { font: { size: 13 } }
+                },
                 tooltip: {
-                    enabled: n <= 5000 // Disabilita i tooltip per i rendering troppo pesanti
+                    enabled: !disableAnimations // Attivi solo se n <= 5000
                 }
             }
         }
@@ -122,5 +169,4 @@ function updateChart() {
 // Event Listeners
 document.getElementById('btn-simulate').addEventListener('click', updateChart);
 
-// Rendering iniziale quando il DOM è caricato
 document.addEventListener('DOMContentLoaded', updateChart);
