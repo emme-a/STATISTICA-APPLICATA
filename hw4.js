@@ -22,8 +22,6 @@ function simulateScaledRandomWalk(n) {
 }
 
 // Funzione per generare le Bande di Confidenza Teoriche (Inviluppo)
-// Il Moto Browniano ha varianza t, quindi deviazione standard sqrt(t).
-// Il limite al 95% è circa 1.96 * sqrt(t).
 function generateTheoreticalEnvelope(n, isUpper) {
     const dataPoints = [];
     dataPoints.push(0);
@@ -69,11 +67,10 @@ function updateChart() {
         data: {
             labels: labels, 
             datasets: [
-                // I 3 percorsi simulati
                 {
                     label: 'Simulazione 1',
                     data: path1,
-                    borderColor: 'rgba(41, 128, 185, 0.8)', // Blu
+                    borderColor: 'rgba(41, 128, 185, 0.8)',
                     borderWidth: 1.5,
                     pointRadius: 0,
                     fill: false,
@@ -82,7 +79,7 @@ function updateChart() {
                 {
                     label: 'Simulazione 2',
                     data: path2,
-                    borderColor: 'rgba(39, 174, 96, 0.8)', // Verde
+                    borderColor: 'rgba(39, 174, 96, 0.8)',
                     borderWidth: 1.5,
                     pointRadius: 0,
                     fill: false,
@@ -91,19 +88,18 @@ function updateChart() {
                 {
                     label: 'Simulazione 3',
                     data: path3,
-                    borderColor: 'rgba(230, 126, 34, 0.8)', // Arancio
+                    borderColor: 'rgba(230, 126, 34, 0.8)',
                     borderWidth: 1.5,
                     pointRadius: 0,
                     fill: false,
                     tension: 0
                 },
-                // Le 2 Bande di Confidenza (Inviluppo)
                 {
                     label: 'Confidenza Teorica (+1.96σ)',
                     data: upperEnvelope,
-                    borderColor: 'rgba(231, 76, 60, 1)', // Rosso
+                    borderColor: 'rgba(231, 76, 60, 1)',
                     borderWidth: 2,
-                    borderDash: [5, 5], // Linea tratteggiata
+                    borderDash: [5, 5],
                     pointRadius: 0,
                     fill: false,
                     tension: 0.4
@@ -111,7 +107,7 @@ function updateChart() {
                 {
                     label: 'Confidenza Teorica (-1.96σ)',
                     data: lowerEnvelope,
-                    borderColor: 'rgba(231, 76, 60, 1)', // Rosso
+                    borderColor: 'rgba(231, 76, 60, 1)',
                     borderWidth: 2,
                     borderDash: [5, 5],
                     pointRadius: 0,
@@ -123,10 +119,10 @@ function updateChart() {
         options: {
             responsive: true,
             maintainAspectRatio: false,
-            // Disabilitiamo le animazioni e i tooltip per evitare blocchi del browser con 20000 punti
+            // Spegne animazioni per 20.000 punti
             animation: disableAnimations ? false : undefined,
-            normalized: true, // Aumenta drasticamente le performance
-            parsing: false,   // Salta il parsing automatico dei dati per aumentare la velocità
+            normalized: true, 
+            parsing: true, // RISOLTO: Rimesso a true per permettere a Chart.js di leggere i tuoi array!
             interaction: {
                 mode: 'nearest',
                 intersect: false
@@ -142,7 +138,6 @@ function updateChart() {
                     ticks: {
                         maxTicksLimit: 10,
                         callback: function(value, index, values) {
-                            // Rende più pulite le etichette dell'asse X
                             return (index / n).toFixed(1);
                         }
                     }
@@ -159,14 +154,20 @@ function updateChart() {
                     labels: { font: { size: 13 } }
                 },
                 tooltip: {
-                    enabled: !disableAnimations // Attivi solo se n <= 5000
+                    enabled: !disableAnimations 
                 }
             }
         }
     });
 }
 
-// Event Listeners
+// 1. Associa il bottone
 document.getElementById('btn-simulate').addEventListener('click', updateChart);
 
-document.addEventListener('DOMContentLoaded', updateChart);
+// 2. RISOLTO: Logica di avvio sicuro. Controlla se la pagina è già caricata.
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', updateChart);
+} else {
+    // Se la pagina ha già finito di caricare, avvia subito il grafico!
+    updateChart();
+}
