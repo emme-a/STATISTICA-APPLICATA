@@ -166,19 +166,12 @@ function updateChart() {
     });
 }
 
-// Event Listeners
-// --- SOSTITUISCI LE ULTIME RIGHE CON QUESTE ---
+document.addEventListener('DOMContentLoaded', () => {
+    const btnSimulate = document.getElementById('btn-simulate');
 
-// 1. Associa il click al bottone (con controllo di sicurezza)
-const btnSimulate = document.getElementById('btn-simulate');
-if (btnSimulate) {
-    btnSimulate.addEventListener('click', updateChart);
-}
+    if (btnSimulate) {
+        btnSimulate.addEventListener('click', updateChart);
+    }
 
-// 2. Forza il rendering iniziale in modo sicuro
-if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', updateChart);
-} else {
-    // Se la pagina è già pronta, disegna subito il grafico!
-    updateChart();
-}
+    updateChart(); // primo rendering
+});
