@@ -6,6 +6,8 @@
   <title>HW4 - Dal Random Walk al Moto Browniano</title>
   <link rel="stylesheet" href="style.css">
   
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  
   <script>
     window.MathJax = {
       tex: {
@@ -18,15 +20,11 @@
 
   <style>
     .dashboard-panel { display: flex; flex-direction: column; gap: 20px; margin-bottom: 30px; }
-    .controls { background: #f8f9fa; padding: 20px; border-radius: 8px; border-left: 4px solid #2c3e50; display: flex; align-items: center; gap: 20px; flex-wrap: wrap; }
-    .control-group { display: flex; flex-direction: column; gap: 5px; }
-    /* Contenitore per il Canvas Puro */
-    .canvas-container { background: #1e1e1e; padding: 20px; border-radius: 8px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); text-align: center; }
-    canvas { background: #121212; border: 1px solid #333; border-radius: 4px; max-width: 100%; box-shadow: inset 0 0 20px rgba(0,0,0,0.8); }
-    .btn-action { padding: 12px 24px; background: #3498db; color: white; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; transition: all 0.3s; font-size: 15px; text-transform: uppercase; letter-spacing: 1px; }
-    .btn-action:hover { background: #2980b9; transform: translateY(-2px); box-shadow: 0 4px 10px rgba(52, 152, 219, 0.4); }
-    .formula-box { background: #f9f9f9; border-left: 4px solid #3498db; padding: 15px 20px; margin: 20px 0; font-size: 1.1em; overflow-x: auto; }
-    .highlight { color: #e74c3c; font-weight: bold; }
+    .controls { background: #f8f9fa; padding: 20px; border-radius: 8px; border-left: 4px solid #8e44ad; }
+    .chart-container { background: white; padding: 20px; border: 1px solid #ddd; border-radius: 8px; width: 100%; height: 600px; box-sizing: border-box; }
+    .btn-action { padding: 10px 20px; background: #8e44ad; color: white; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; transition: background 0.2s; font-size: 15px;}
+    .btn-action:hover { background: #732d91; }
+    .formula-box { background: #e8f4f8; padding: 15px; border-radius: 8px; margin: 15px 0; text-align: center; overflow-x: auto; font-size: 1.2em;}
   </style>
 </head>
 <body>
@@ -43,37 +41,27 @@
     </aside>
 
     <main class="content">
-      <h1 style="border-bottom: 2px solid #ddd; padding-bottom: 10px;">HW4: Convergenza al Moto Browniano (ABM)</h1>
+      <h1 style="border-bottom: 2px solid #ddd; padding-bottom: 10px;">HW4: Convergenza al Moto Browniano</h1>
 
       <section class="section">
-        <h2>Simulazione Dinamica: Il Teorema di Donsker in Azione</h2>
-        <p>In questo ambiente di simulazione ad alte prestazioni, generiamo in tempo reale la transizione da un processo discreto (Random Walk) a uno continuo (Moto Browniano Standard). L'algoritmo calcola dinamicamente le traiettorie e le sovrappone all'<strong>Inviluppo di Confidenza Teorico</strong> al 95% (\( \pm 1.96 \sqrt{t} \)), rappresentato dalle curve rosse tratteggiate.</p>
+        <h2>Applicazione: Invarianza e Inviluppo Teorico</h2>
+        <p>In questo esperimento mostriamo come una Random Walk discreta converga al Moto Browniano Aritmetico (ABM). Fissiamo l'orizzonte temporale \( T = 1 \) e lo dividiamo in \( n \) step, per cui ogni istante è \( t_k = k/n \).</p>
+        <p>Per stabilizzare la varianza, scaliamo i salti cumulati per \( 1/\sqrt{n} \). Per dimostrare che la simulazione è corretta, il grafico mostrerà le curve tratteggiate dell'<strong>Inviluppo Teorico</strong> (le bande di confidenza \( \pm 1.96 \sqrt{t} \)). Vedrai che i percorsi generati rimarranno coerenti con questa espansione della varianza.</p>
         
         <div class="controls">
-          <div class="control-group">
-            <label for="step-select"><strong>Risoluzione Temporale (\(n\) passi):</strong></label>
-            <select id="step-select" style="padding: 8px; font-size: 15px; border-radius: 4px;">
-              <option value="500">n = 500 (Bassa Risoluzione)</option>
-              <option value="2000">n = 2.000 (Risoluzione Media)</option>
-              <option value="10000" selected>n = 10.000 (Alta Risoluzione)</option>
-              <option value="50000">n = 50.000 (Moto Continuo Estremo)</option>
-            </select>
-          </div>
-          <div class="control-group">
-            <label for="paths-select"><strong>Numero di Traiettorie:</strong></label>
-            <select id="paths-select" style="padding: 8px; font-size: 15px; border-radius: 4px;">
-              <option value="1">1 Traiettoria</option>
-              <option value="3" selected>3 Traiettorie</option>
-              <option value="5">5 Traiettorie</option>
-              <option value="10">10 Traiettorie</option>
-            </select>
-          </div>
-          <button id="btn-simulate" class="btn-action">▶ Genera Processo</button>
+          <label for="step-select" style="font-weight: bold; margin-right: 15px;">Scegli il numero di step (\(n\)):</label>
+          <select id="step-select" style="padding: 8px; font-size: 16px; margin-right: 20px; border-radius: 5px;">
+            <option value="100">n = 100 (Discreto)</option>
+            <option value="1000">n = 1.000 (Transizione)</option>
+            <option value="5000" selected>n = 5.000 (Continuo)</option>
+            <option value="20000">n = 20.000 (ABM Estremo)</option>
+          </select>
+          <button id="btn-simulate" class="btn-action">Simula Convergenza</button>
         </div>
 
         <div class="dashboard-panel">
-          <div class="canvas-container">
-            <canvas id="abmCanvas" width="900" height="500"></canvas>
+          <div class="chart-container">
+            <canvas id="abmChart"></canvas>
           </div>
         </div>
       </section>
@@ -81,28 +69,30 @@
       <hr style="border: 0; border-top: 1px solid #ddd; margin: 40px 0;">
 
       <section class="section">
-        <h2>Teoria: Dal Discreto al Continuo nel Calcolo Stocastico</h2>
+        <h2>Teoria: Il Principio di Invarianza di Donsker</h2>
+        <p>Il risultato visivo ottenuto nel grafico è la dimostrazione pratica del <strong>Principio di Invarianza di Donsker</strong> (Teorema del Limite Centrale Funzionale).</p>
 
-        <h3>1. Il Principio di Invarianza di Donsker</h3>
-        <p>Sia \( Y_1, Y_2, \dots \) una successione di variabili aleatorie indipendenti e identicamente distribuite (i.i.d.) con \( \mathbb{E}[Y_i] = 0 \) e \( \text{Var}(Y_i) = \sigma^2 \). Se definiamo la somma parziale \( S_k = \sum_{i=1}^{k} Y_i \), il Teorema di Donsker stabilisce che il processo interpolato e scalato:</p>
+        <h3>Il problema della scalatura</h3>
+        <p>Consideriamo una sequenza di variabili aleatorie \( Y_1, Y_2, \dots, Y_n \) indipendenti e identicamente distribuite (i.i.d.), con media \( \mu = 0 \) e varianza finita \( \sigma^2 > 0 \). Nella nostra simulazione usiamo variabili di Rademacher (salti discreti \( \pm 1 \) con probabilità 50%), che hanno media 0 e varianza 1.</p>
+        <p>Se definiamo il processo somma come \( S_k = \sum_{i=1}^{k} Y_i \), notiamo che al crescere di \( k \), la varianza di \( S_k \) cresce linearmente (pari a \( k\sigma^2 \)). Se cercassimo di comprimere infiniti passi nell'intervallo temporale \( [0, 1] \), l'ampiezza della curva tenderebbe all'infinito. È necessario un fattore di normalizzazione.</p>
+
+        <h3>La costruzione del processo scalato</h3>
+        <p>Costruiamo un nuovo processo continuo nel tempo, interpolando i valori della Random Walk. Scaliamo l'asse dei tempi dividendo per \( n \) e l'asse dei valori spaziali per \( \sqrt{n} \):</p>
         
         <div class="formula-box">
           \[ W^{(n)}(t) = \frac{1}{\sigma \sqrt{n}} S_{\lfloor nt \rfloor} \]
         </div>
         
-        <p>converge in distribuzione, per \( n \to \infty \), al <strong>Moto Browniano Standard</strong> \( W(t) \) per \( t \in [0,1] \). L'importanza cruciale di questo teorema risiede nell'<span class="highlight">invarianza</span>: la natura macroscopica del processo continuo non dipende dalla distribuzione esatta dei singoli passi microscopici (Rademacher, Normale, ecc.), purché la varianza sia finita.</p>
+        <p>Dove \( t \in [0,1] \) e \( \lfloor nt \rfloor \) è la parte intera (il numero di salti completati fino al tempo \( t \)). Grazie alla divisione per \( \sqrt{n} \), la varianza al tempo finale \( t=1 \) è costretta a rimanere esattamente 1, indipendentemente dal numero di passi \( n \).</p>
 
-        <h3>2. Perché dividiamo per \( \sqrt{n} \)? (La Variazione Quadratica)</h3>
-        <p>A differenza del calcolo differenziale classico di Newton e Leibniz, dove la variazione di una variabile \( (dt)^2 \to 0 \), nel calcolo stocastico (Lemma di Itô) la variazione quadratica del Moto Browniano non è nulla, ma è proporzionale al tempo stesso:</p>
+        <h3>La Convergenza e l'Invarianza</h3>
+        <p>Il Teorema di Donsker afferma che, per \( n \to \infty \), il processo scalato \( W^{(n)}(t) \) converge in distribuzione (nello spazio delle funzioni continue) allo <strong>Standard Brownian Motion</strong> (Moto Browniano) \( W(t) \).</p>
         
         <div class="formula-box">
-          \[ dW_t \sim \mathcal{N}(0, dt) \implies (dW_t)^2 = dt \]
+          \[ W^{(n)}(t) \xrightarrow{\mathcal{D}} W(t) \]
         </div>
 
-        <p>Se non dividessimo per \( \sqrt{n} \) (che rappresenta la radice del tempo), la varianza esploderebbe all'infinito. Scalando spazialmente per \( 1/\sqrt{n} \) e temporalmente per \( 1/n \), forziamo la varianza al tempo \( t=1 \) a rimanere esattamente pari a 1.</p>
-
-        <h3>3. Non-differenziabilità e Natura Frattale</h3>
-        <p>Una conseguenza diretta della simulazione ad altissima risoluzione (es. \( n=50.000 \)) è l'osservazione visiva della <strong>natura frattale</strong> del processo. Le traiettorie generate sono continue ovunque, ma <span class="highlight">differenziabili in nessun punto</span>. Zoomando su un qualsiasi intervallo del grafico, si rivelerà una struttura altrettanto frastagliata e irregolare quanto il percorso completo. Questo rende le curve di prezzo finanziario impossibili da trattare con la geometria classica.</p>
+        <p>La caratteristica di <strong>"Invarianza"</strong> indica che il limite non dipende dalla distribuzione specifica dei singoli passi: finché i passi sono indipendenti, a media zero e varianza finita, il macro-risultato convergerà sempre a un Moto Browniano. È l'equivalente del Teorema del Limite Centrale applicato a intere traiettorie stocastiche.</p>
       </section>
 
     </main>
