@@ -169,4 +169,5 @@ function updateChart() {
 // Event Listeners
 document.getElementById('btn-simulate').addEventListener('click', updateChart);
 
+// Carica il grafico all'apertura della pagina
 document.addEventListener('DOMContentLoaded', updateChart);
