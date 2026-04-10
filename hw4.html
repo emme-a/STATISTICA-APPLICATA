@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>HW4 - Dal Random Walk al Moto Browniano</title>
+
   <link rel="stylesheet" href="style.css">
   
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -27,6 +28,7 @@
     .formula-box { background: #e8f4f8; padding: 15px; border-radius: 8px; margin: 15px 0; text-align: center; overflow-x: auto; font-size: 1.2em;}
   </style>
 </head>
+
 <body>
   <div class="layout">
     
@@ -41,22 +43,73 @@
     </aside>
 
     <main class="content">
-      <h1 style="border-bottom: 2px solid #ddd; padding-bottom: 10px;">HW4: Convergenza al Moto Browniano</h1>
+
+      <h1 style="border-bottom: 2px solid #ddd; padding-bottom: 10px;">
+        HW4: Convergenza al Moto Browniano
+      </h1>
 
       <section class="section">
+
         <h2>Applicazione: Invarianza e Inviluppo Teorico</h2>
-        <p>In questo esperimento mostriamo come una Random Walk discreta converga al Moto Browniano Aritmetico (ABM). Fissiamo l'orizzonte temporale \( T = 1 \) e lo dividiamo in \( n \) step, per cui ogni istante è \( t_k = k/n \).</p>
-        <p>Per stabilizzare la varianza, scaliamo i salti cumulati per \( 1/\sqrt{n} \). Per dimostrare che la simulazione è corretta, il grafico mostrerà le curve tratteggiate dell'<strong>Inviluppo Teorico</strong> (le bande di confidenza \( \pm 1.96 \sqrt{t} \)). Vedrai che i percorsi generati rimarranno coerenti con questa espansione della varianza.</p>
-        
+
+        <p>
+          In questo esperimento mostriamo numericamente come una Random Walk discreta 
+          converga al Moto Browniano Aritmetico (ABM). Fissiamo l'orizzonte temporale 
+          \( T = 1 \) e lo suddividiamo in \( n \) intervalli:
+        </p>
+
+        <div class="formula-box">
+          \[
+          t_k = \frac{k}{n}, \quad k = 0, \dots, n
+          \]
+        </div>
+
+        <p>
+          Consideriamo una sequenza di variabili di Rademacher \( Y_i \in \{-1,+1\} \) 
+          e definiamo la somma parziale:
+        </p>
+
+        <div class="formula-box">
+          \[
+          S_k = \sum_{i=1}^{k} Y_i
+          \]
+        </div>
+
+        <p>
+          Per ottenere convergenza a un processo continuo, introduciamo la scalatura:
+        </p>
+
+        <div class="formula-box">
+          \[
+          W^{(n)}(t) = \frac{1}{\sqrt{n}} S_{\lfloor nt \rfloor}
+          \]
+        </div>
+
+        <p>
+          Il grafico mostra anche l'<strong>invilluppo teorico</strong> del Moto Browniano:
+        </p>
+
+        <div class="formula-box">
+          \[
+          \pm 1.96 \sqrt{t}
+          \]
+        </div>
+
         <div class="controls">
-          <label for="step-select" style="font-weight: bold; margin-right: 15px;">Scegli il numero di step (\(n\)):</label>
+          <label for="step-select" style="font-weight: bold; margin-right: 15px;">
+            Numero di step (\(n\)):
+          </label>
+
           <select id="step-select" style="padding: 8px; font-size: 16px; margin-right: 20px; border-radius: 5px;">
             <option value="100">n = 100 (Discreto)</option>
-            <option value="1000">n = 1.000 (Transizione)</option>
-            <option value="5000" selected>n = 5.000 (Continuo)</option>
-            <option value="20000">n = 20.000 (ABM Estremo)</option>
+            <option value="1000">n = 1.000</option>
+            <option value="5000" selected>n = 5.000</option>
+            <option value="20000">n = 20.000</option>
           </select>
-          <button id="btn-simulate" class="btn-action">Simula Convergenza</button>
+
+          <button id="btn-simulate" class="btn-action">
+            Simula Convergenza
+          </button>
         </div>
 
         <div class="dashboard-panel">
@@ -64,39 +117,45 @@
             <canvas id="abmChart"></canvas>
           </div>
         </div>
+
       </section>
 
       <hr style="border: 0; border-top: 1px solid #ddd; margin: 40px 0;">
 
       <section class="section">
-        <h2>Teoria: Il Principio di Invarianza di Donsker</h2>
-        <p>Il risultato visivo ottenuto nel grafico è la dimostrazione pratica del <strong>Principio di Invarianza di Donsker</strong> (Teorema del Limite Centrale Funzionale).</p>
 
-        <h3>Il problema della scalatura</h3>
-        <p>Consideriamo una sequenza di variabili aleatorie \( Y_1, Y_2, \dots, Y_n \) indipendenti e identicamente distribuite (i.i.d.), con media \( \mu = 0 \) e varianza finita \( \sigma^2 > 0 \). Nella nostra simulazione usiamo variabili di Rademacher (salti discreti \( \pm 1 \) con probabilità 50%), che hanno media 0 e varianza 1.</p>
-        <p>Se definiamo il processo somma come \( S_k = \sum_{i=1}^{k} Y_i \), notiamo che al crescere di \( k \), la varianza di \( S_k \) cresce linearmente (pari a \( k\sigma^2 \)). Se cercassimo di comprimere infiniti passi nell'intervallo temporale \( [0, 1] \), l'ampiezza della curva tenderebbe all'infinito. È necessario un fattore di normalizzazione.</p>
+        <h2>Teoria: Principio di Invarianza di Donsker</h2>
 
-        <h3>La costruzione del processo scalato</h3>
-        <p>Costruiamo un nuovo processo continuo nel tempo, interpolando i valori della Random Walk. Scaliamo l'asse dei tempi dividendo per \( n \) e l'asse dei valori spaziali per \( \sqrt{n} \):</p>
-        
+        <p>
+          Il risultato osservato è una manifestazione del Teorema del Limite Funzionale 
+          (Principio di Invarianza di Donsker).
+        </p>
+
+        <p>
+          Sia \( Y_i \) una sequenza i.i.d. con:
+          media nulla e varianza finita. Allora:
+        </p>
+
         <div class="formula-box">
-          \[ W^{(n)}(t) = \frac{1}{\sigma \sqrt{n}} S_{\lfloor nt \rfloor} \]
-        </div>
-        
-        <p>Dove \( t \in [0,1] \) e \( \lfloor nt \rfloor \) è la parte intera (il numero di salti completati fino al tempo \( t \)). Grazie alla divisione per \( \sqrt{n} \), la varianza al tempo finale \( t=1 \) è costretta a rimanere esattamente 1, indipendentemente dal numero di passi \( n \).</p>
-
-        <h3>La Convergenza e l'Invarianza</h3>
-        <p>Il Teorema di Donsker afferma che, per \( n \to \infty \), il processo scalato \( W^{(n)}(t) \) converge in distribuzione (nello spazio delle funzioni continue) allo <strong>Standard Brownian Motion</strong> (Moto Browniano) \( W(t) \).</p>
-        
-        <div class="formula-box">
-          \[ W^{(n)}(t) \xrightarrow{\mathcal{D}} W(t) \]
+          \[
+          W^{(n)}(t) \xrightarrow{\mathcal{D}} W(t)
+          \]
         </div>
 
-        <p>La caratteristica di <strong>"Invarianza"</strong> indica che il limite non dipende dalla distribuzione specifica dei singoli passi: finché i passi sono indipendenti, a media zero e varianza finita, il macro-risultato convergerà sempre a un Moto Browniano. È l'equivalente del Teorema del Limite Centrale applicato a intere traiettorie stocastiche.</p>
+        <p>
+          dove \( W(t) \) è il Moto Browniano standard.
+        </p>
+
+        <p>
+          Questo risultato è <strong>invariante</strong>: non dipende dalla distribuzione 
+          specifica delle variabili, ma solo da media e varianza.
+        </p>
+
       </section>
 
     </main>
   </div>
+
   <script src="hw4.js"></script>
 </body>
 </html>
