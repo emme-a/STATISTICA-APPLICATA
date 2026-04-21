@@ -88,57 +88,157 @@
       <hr style="border: 0; border-top: 1px solid #ddd; margin: 40px 0;">
 
       <section class="theory-section">
-        <h2>Teoria: Anatomia delle Equazioni Differenziali Stocastiche</h2>
-        <p>In una prova d'esame di statistica applicata, non è sufficiente presentare la formula finale; occorre comprendere il significato degli incrementi infinitesimali che governano il sistema. Ogni SDE qui analizzata è composta da una parte deterministica e una stocastica.</p>
+  <h2>Teoria: Comprendere le Equazioni Differenziali Stocastiche</h2>
 
-        <h3>Il Mattone Fondamentale: L'incremento di Wiener \( (dW_t) \)</h3>
-        <p>In tutte le formule seguenti, il termine \( dW_t \) rappresenta il "motore" della casualità:</p>
-        <div class="formula-box">
-          \[ dW_t = \epsilon \sqrt{dt}, \quad \text{con } \epsilon \sim \mathcal{N}(0, 1) \]
-        </div>
-        <ul class="component-list">
-          <li><b>\( \epsilon \):</b> Una variabile normale standard che genera l'urto casuale.</li>
-          <li><b>\( \sqrt{dt} \):</b> Il fattore di scala temporale. La radice quadrata è necessaria affinché la varianza del processo cresca linearmente con il tempo (\( \text{Var}(W_t) = t \)).</li>
-        </ul>
+  <p>
+    Le equazioni differenziali stocastiche (SDE) rappresentano uno degli strumenti più potenti
+    della finanza quantitativa e della probabilità applicata. A differenza delle equazioni
+    differenziali classiche, esse incorporano una componente casuale che consente di modellare
+    fenomeni reali caratterizzati da incertezza, come i mercati finanziari, i tassi di interesse
+    o sistemi fisici soggetti a rumore.
+  </p>
 
-        <h3>1. Arithmetic Brownian Motion (ABM)</h3>
-        <div class="formula-box">
-          \[ dX_t = \mu \, dt + \sigma \, dW_t \]
-        </div>
-        <ul class="component-list">
-          <li><b>\( dX_t \):</b> Variazione infinitesima del valore al tempo \( t \).</li>
-          <li><b>\( \mu \, dt \):</b> Termine di <strong>Drift</strong>. Indica la velocità di crescita media costante. Se \( \mu=0.1 \), il processo sale mediamente di 0.1 unità per ogni secondo/anno.</li>
-          <li><b>\( \sigma \, dW_t \):</b> Termine di <strong>Diffusione</strong>. Definisce l'ampiezza del rumore bianco.</li>
-        </ul>
+  <p>
+    L’idea centrale è che l’evoluzione di una variabile nel tempo non sia deterministica,
+    ma il risultato della combinazione di due effetti distinti:
+  </p>
 
-        <h3>2. Geometric Brownian Motion (GBM)</h3>
-        <p>Il GBM è il modello cardine per i prezzi azionari perché impedisce i valori negativi rendendo la variazione proporzionale al prezzo attuale.</p>
-        <div class="formula-box">
-          \[ dS_t = \mu S_t \, dt + \sigma S_t \, dW_t \]
-        </div>
-        <ul class="component-list">
-          <li><b>\( S_t \):</b> Il prezzo attuale. Nota come appaia in entrambi i termini: questo implica che un'azione che costa 200€ fluttua (in termini assoluti) il doppio rispetto a una che costa 100€.</li>
-          <li><b>\( \mu S_t \, dt \):</b> Drift proporzionale. Indica un rendimento percentuale atteso costante.</li>
-          <li><b>\( \sigma S_t \, dW_t \):</b> Volatilità proporzionale. Se \( \sigma=0.2 \), l'incertezza è pari al 20% del prezzo corrente.</li>
-        </ul>
-        <div class="note-box">
-          <strong>Insight Matematico:</strong> Applicando il Lemma di Itô, si scopre che il termine di crescita reale del log-prezzo è \( \mu - \frac{\sigma^2}{2} \). Il termine negativo è la "correzione di Jensen", dovuta alla convessità della funzione esponenziale in un contesto stocastico.
-        </div>
+  <ul class="component-list">
+    <li><b>Componente deterministica (drift):</b> descrive la tendenza media del sistema.</li>
+    <li><b>Componente stocastica (diffusione):</b> rappresenta le fluttuazioni casuali.</li>
+  </ul>
 
-        <h3>3. Ornstein-Uhlenbeck (Mean Reversion)</h3>
-        <p>Modella variabili che tendono a un equilibrio, come i tassi di interesse (Modello di Vasicek).</p>
-        <div class="formula-box">
-          \[ dX_t = \theta (\mu - X_t) dt + \sigma \, dW_t \]
-        </div>
-        <ul class="component-list">
-          <li><b>\( \mu \):</b> <strong>Long-term Mean</strong>. Il valore di equilibrio verso cui il processo è attratto.</li>
-          <li><b>\( (\mu - X_t) \):</b> Lo scostamento attuale dall'equilibrio.</li>
-          <li><b>\( \theta \):</b> <strong>Speed of Reversion</strong>. Determina la forza dell'elastico: se \( X_t \) è lontano da \( \mu \), il drift \( \theta(\mu - X_t) \) diventa molto grande, forzando il ritorno alla base.</li>
-          <li><b>\( \sigma \):</b> Impedisce al processo di fermarsi sulla media, mantenendolo in costante oscillazione.</li>
-        </ul>
-      </section>
-    </main>
+  <h3>Il ruolo fondamentale del moto browniano</h3>
+
+  <p>
+    Alla base di tutte le SDE vi è il moto browniano, o processo di Wiener. Questo oggetto
+    matematico formalizza il concetto di “rumore bianco” continuo nel tempo.
+  </p>
+
+  <div class="formula-box">
+    \[ dW_t = \epsilon \sqrt{dt}, \quad \epsilon \sim \mathcal{N}(0,1) \]
   </div>
-  <script src="hw5.js"></script>
-</body>
-</html>
+
+  <p>
+    Questa espressione, apparentemente semplice, contiene un’intuizione profonda:
+    gli incrementi del processo sono casuali (grazie a \( \epsilon \)) ma scalano con
+    la radice del tempo (\( \sqrt{dt} \)). Questo garantisce che la varianza cresca
+    linearmente nel tempo, proprietà fondamentale del moto browniano:
+  </p>
+
+  <div class="formula-box">
+    \[ \mathrm{Var}(W_t) = t \]
+  </div>
+
+  <p>
+    In altre parole, più si osserva il processo a lungo, maggiore è l’incertezza accumulata.
+  </p>
+
+  <h3>1. Moto Browniano Aritmetico (ABM)</h3>
+
+  <div class="formula-box">
+    \[ dX_t = \mu \, dt + \sigma \, dW_t \]
+  </div>
+
+  <p>
+    Questo è il modello più semplice di SDE. La dinamica della variabile \( X_t \)
+    è data dalla somma di un trend lineare e di un rumore casuale.
+  </p>
+
+  <p>
+    Il termine \( \mu \, dt \) rappresenta una crescita media costante nel tempo:
+    il processo tende a muoversi in una direzione ben definita.
+    Tuttavia, questa traiettoria è continuamente perturbata dal termine
+    \( \sigma \, dW_t \), che introduce oscillazioni imprevedibili.
+  </p>
+
+  <p>
+    Un limite importante di questo modello è che non impone alcun vincolo sui valori:
+    la variabile può diventare negativa, il che lo rende inadatto per descrivere prezzi finanziari.
+  </p>
+
+  <h3>2. Moto Browniano Geometrico (GBM)</h3>
+
+  <div class="formula-box">
+    \[ dS_t = \mu S_t \, dt + \sigma S_t \, dW_t \]
+  </div>
+
+  <p>
+    Il GBM è il modello standard per i prezzi azionari. La differenza chiave rispetto
+    all’ABM è che sia il drift sia la volatilità sono proporzionali al livello corrente \( S_t \).
+  </p>
+
+  <p>
+    Questo implica che le variazioni sono percentuali, non assolute. Ad esempio,
+    un’azione che vale 200€ tenderà a oscillare più di una che vale 50€, mantenendo però
+    la stessa volatilità relativa.
+  </p>
+
+  <p>
+    Una proprietà cruciale del GBM è che garantisce positività: se il valore iniziale è positivo,
+    il processo rimane sempre positivo. Questo lo rende particolarmente adatto alla modellazione
+    dei prezzi.
+  </p>
+
+  <p>
+    Un risultato importante, ottenuto tramite il Lemma di Itô, è che la crescita del logaritmo
+    del processo non è semplicemente \( \mu \), ma:
+  </p>
+
+  <div class="formula-box">
+    \[ \mu - \frac{\sigma^2}{2} \]
+  </div>
+
+  <p>
+    Questo termine correttivo riflette un effetto puramente stocastico: la volatilità riduce
+    il tasso di crescita effettivo. È una conseguenza della non linearità della funzione esponenziale.
+  </p>
+
+  <h3>3. Processo di Ornstein-Uhlenbeck</h3>
+
+  <div class="formula-box">
+    \[ dX_t = \theta (\mu - X_t) dt + \sigma \, dW_t \]
+  </div>
+
+  <p>
+    Questo modello introduce un comportamento completamente diverso: la <b>mean reversion</b>.
+    Invece di allontanarsi indefinitamente, il processo tende a ritornare verso un valore di equilibrio.
+  </p>
+
+  <p>
+    Il termine \( (\mu - X_t) \) misura quanto il sistema è distante dalla media di lungo periodo.
+    Più grande è questa distanza, più forte sarà la spinta verso il ritorno.
+  </p>
+
+  <p>
+    Il parametro \( \theta \) controlla la velocità di questo aggiustamento:
+    valori elevati implicano un ritorno rapido alla media, mentre valori piccoli
+    producono dinamiche più lente e persistenti.
+  </p>
+
+  <p>
+    Tuttavia, il processo non si stabilizza mai completamente. La presenza del termine
+    \( \sigma \, dW_t \) garantisce che continui a oscillare attorno alla media,
+    riflettendo l’incertezza intrinseca del sistema.
+  </p>
+
+  <div class="note-box">
+    Questo modello è ampiamente utilizzato per descrivere grandezze economiche
+    come i tassi di interesse o gli spread, dove esiste un equilibrio naturale
+    ma le fluttuazioni di breve periodo sono inevitabili.
+  </div>
+
+  <h3>Conclusione</h3>
+
+  <p>
+    Le SDE forniscono un linguaggio matematico per descrivere sistemi dinamici in presenza
+    di incertezza. Comprendere la distinzione tra drift e diffusione, così come il ruolo
+    del moto browniano, è essenziale per interpretare correttamente questi modelli.
+  </p>
+
+  <p>
+    Ogni equazione analizzata rappresenta un diverso equilibrio tra determinismo e casualità:
+    dall’evoluzione libera dell’ABM, alla crescita proporzionale del GBM,
+    fino al comportamento stabilizzante dell’Ornstein-Uhlenbeck.
+  </p>
+</section>
