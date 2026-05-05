@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>HW6 - Trading Strategy & Performance</title>
+  <link rel="stylesheet" href="style.css">
+  
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script>
+    window.MathJax = { tex: { inlineMath: [['\\(', '\\)']], displayMath: [['\\[', '\\]']] } };
+  </script>
+  <script async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+  <style>
+    .dashboard-panel { display: flex; flex-direction: column; gap: 20px; margin-bottom: 30px; }
+    .controls { background: #f8f9fa; padding: 20px; border-radius: 8px; border-left: 5px solid #27ae60; display: flex; flex-wrap: wrap; gap: 15px; align-items: flex-end; }
+    .control-group { display: flex; flex-direction: column; gap: 5px; }
+    .control-group label { font-weight: bold; font-size: 13px; color: #2c3e50; }
+    .control-group input { padding: 8px; border: 1px solid #cbd5e0; border-radius: 4px; width: 120px; }
+    .chart-container { background: white; padding: 20px; border: 1px solid #e2e8f0; border-radius: 12px; width: 100%; height: 450px; box-sizing: border-box; }
+    .btn-action { padding: 10px 20px; background: #27ae60; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; transition: all 0.2s; }
+    .btn-action:hover { background: #219653; }
+    
+    /* KPI Panel Styles */
+    .kpi-container { display: flex; gap: 20px; margin-top: 10px; }
+    .kpi-box { flex: 1; padding: 20px; border-radius: 8px; color: white; text-align: center; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+    .kpi-pnl { background: linear-gradient(135deg, #2ecc71, #27ae60); }
+    .kpi-dd { background: linear-gradient(135deg, #e74c3c, #c0392b); }
+    .kpi-title { font-size: 14px; text-transform: uppercase; font-weight: bold; opacity: 0.9; }
+    .kpi-value { font-size: 28px; font-weight: bold; margin-top: 10px; font-family: monospace; }
+    
+    .formula-box { background: #f7fafc; border: 1px solid #e2e8f0; padding: 20px; border-radius: 10px; margin: 20px 0; overflow-x: auto; text-align: center; font-size: 1.1em;}
+  </style>
+</head>
+<body>
+  <div class="layout">
+    
+    <aside class="sidebar">
+      <h2>Menù Consegne</h2>
+      <a href="index.html">🏠 Home</a>
+      <a href="pratica-js.html">💻 HW1: Pratica JS</a>
+      <a href="teoria-welford.html">📐 HW1: Teoria Welford</a>
+      <a href="hw2.html">📊 HW2: Variabili e Varianza</a>
+      <a href="hw3.html">📈 HW3: Random Walk</a>
+      <a href="hw4.html">🌀 HW4: Moto Browniano</a>
+      <a href="hw5.html">📈 HW5: Processi SDE</a>
+      <a href="hw6.html" class="active">🤖 HW6: Trading Strategy PnL</a>
+    </aside>
+
+    <main class="content">
+      <h1 style="border-bottom: 2px solid #ddd; padding-bottom: 10px;">HW6: Backtesting di Strategie Quantitative</h1>
+
+      <section class="section">
+        <h2>Simulatore Backtest (SMA Crossover)</h2>
+        <p>In questo ambiente simuliamo il prezzo di un asset usando il <strong>Geometric Brownian Motion (GBM)</strong> e applichiamo una strategia di trading algoritmico basata sull'incrocio di Medie Mobili (SMA Veloce e Lenta). Calcoliamo in tempo reale il <strong>PnL</strong> cumulativo e il <strong>Max Drawdown</strong>.</p>
+        
+        <div class="controls">
+          <div class="control-group">
+            <label for="input-mu">Drift (\(\mu\)):</label>
+            <input type="number" id="input-mu" value="0.05" step="0.01">
+          </div>
+          <div class="control-group">
+            <label for="input-sigma">Volatilità (\(\sigma\)):</label>
+            <input type="number" id="input-sigma" value="0.15" step="0.01">
+          </div>
+          <div class="control-group">
+            <label for="input-fast">SMA Veloce (Giorni):</label>
+            <input type="number" id="input-fast" value="10" step="1">
+          </div>
+          <div class="control-group">
+            <label for="input-slow">SMA Lenta (Giorni):</label>
+            <input type="number" id="input-slow" value="30" step="1">
+          </div>
+          <button id="btn-simulate" class="btn-action">Esegui Backtest</button>
+        </div>
+
+        <div class="kpi-container">
+          <div class="kpi-box kpi-pnl">
+            <div class="kpi-title">Profit & Loss (PnL)</div>
+            <div class="kpi-value" id="val-pnl">€ 0.00</div>
+          </div>
+          <div class="kpi-box kpi-dd">
+            <div class="kpi-title">Maximum Drawdown (MDD)</div>
+            <div class="kpi-value" id="val-mdd">€ 0.00</div>
+          </div>
+        </div>
+
+        <div class="dashboard-panel" style="margin-top: 20px;">
+          <div class="chart-container">
+            <canvas id="tradingChart"></canvas>
+          </div>
+        </div>
+      </section>
+
+      <hr style="border: 0; border-top: 1px solid #ddd; margin: 40px 0;">
+
+      <section class="section">
+        <h2>Teoria: Valutazione delle Strategie di Trading</h2>
+
+        <h3>1. La Regola (Trading Strategy)</h3>
+        <p>Una strategia di trading quantitativo definisce regole matematiche rigide per entrare e uscire dal mercato. In questo homework utilizziamo l'incrocio di due medie mobili semplici (Simple Moving Average - SMA).</p>
+        <ul>
+          <li><strong>Regola Long (+1):</strong> Quando la SMA veloce supera (incrocia verso l'alto) la SMA lenta, il trend è rialzista. La strategia compra un'unità dell'asset.</li>
+          <li><strong>Regola Short (-1):</strong> Quando la SMA veloce scende sotto la SMA lenta, il trend è ribassista. La strategia vende allo scoperto un'unità dell'asset.</li>
+        </ul>
+
+        <h3>2. Profit and Loss (PnL)</h3>
+        <p>Il PnL rappresenta il guadagno o la perdita totale generata dalla strategia. Si calcola iterativamente aggiornando il capitale in base alla posizione assunta al tempo precedente e alla variazione del prezzo al tempo corrente:</p>
+        <div class="formula-box">
+          \[ \text{PnL}_t = \text{PnL}_{t-1} + \text{Posizione}_{t-1} \times (S_t - S_{t-1}) \]
+        </div>
+        <p>Dove \( \text{Posizione} \in \{-1, 0, 1\} \).</p>
+
+        <h3>3. Drawdown e Maximum Drawdown (MDD)</h3>
+        <p>Il <strong>Maximum Drawdown</strong> è la metrica più importante nella gestione del rischio (Risk Management). Rappresenta la massima perdita registrata da un portafoglio dal suo picco massimo storico (High-Water Mark) prima di stabilire un nuovo picco.</p>
+        <p>Per calcolarlo iterativamente, si definisce il picco corrente e il drawdown corrente:</p>
+        <div class="formula-box">
+          \[ \text{Peak}_t = \max(\text{Peak}_{t-1}, \text{PnL}_t) \]
+          \[ \text{DD}_t = \text{Peak}_t - \text{PnL}_t \]
+          \[ \text{MDD} = \max_{0 \le t \le T}(\text{DD}_t) \]
+        </div>
+        <p>Mentre un PnL elevato indica una strategia profittevole, un MDD elevato indica che la strategia è estremamente rischiosa, poiché costringe l'investitore a sopportare perdite profonde per ottenere quel guadagno.</p>
+      </section>
+
+    </main>
+  </div>
+  <script src="hw6.js"></script>
+</body>
+</html>
